@@ -6,6 +6,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -20,8 +21,9 @@ public class LagouSpiderServiceTest {
     System.out.println("let's start");
   }
 
+  //拉勾
   @Test
-  public void testJsoup() {
+  public void testLagouWithJsoup() {
 
     try {
       //fix UnsupportedMimeTypeException by using ignoreContentType(true)
@@ -34,6 +36,45 @@ public class LagouSpiderServiceTest {
     }
 
   }
+
+  //内推,通过解析html页面获取数据
+  @Test
+  public void testNeituiWithJsoup() {
+    String neiTuiUrl = "http://www.neitui" +
+        ".me/?name=neitui&handle=lists&keyword=Java&kcity=上海&workage=2&page=1";
+    try {
+      Document doc = Jsoup.connect(neiTuiUrl).ignoreContentType(true).get();
+     // System.out.println(doc);
+      System.out.println("________________________________________________");
+//      System.out.println(doc.getElementById("joblist"));
+//      System.out.println(doc.select(".commentjobs")); //通过css 类选择器,选择最具有唯一性标志的css类,来解析joblist.
+
+//      Elements jobList = doc.select(".commentjobs");
+//      System.out.println(jobList.size());
+
+      System.out.println(
+          doc.getElementsByAttributeValue("class", "content commentjobs brjobs topjobs"));
+      //通过attribute的K-V查找模式.
+
+      System.out.println("________________________________________________");
+//      System.out.println(doc.getElementById("J_Screen_Workage"));
+
+      System.out.println("________________________________________________");
+//      System.out.println(doc.select("content commentjobs brjobs topjobs"));
+      System.out.println("________________________________________________");
+//      System.out.println(doc.getElementsByClass("content commentjobs brjobs topjobs"));
+
+
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+
+  }
+
+
+
 
   @Test
   public void testHttpClient() {
@@ -66,7 +107,6 @@ public class LagouSpiderServiceTest {
     } catch (IOException e) {
       e.printStackTrace();
     }
-
 
   }
 
