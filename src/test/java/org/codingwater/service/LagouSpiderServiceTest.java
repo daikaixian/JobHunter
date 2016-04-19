@@ -6,7 +6,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -34,7 +33,6 @@ public class LagouSpiderServiceTest {
     } catch (IOException e) {
       e.printStackTrace();
     }
-
   }
 
   //内推,通过解析html页面获取数据
