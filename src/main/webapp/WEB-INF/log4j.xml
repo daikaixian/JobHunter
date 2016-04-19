@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration PUBLIC "-//APACHE//DTD LOG4J 1.2//EN" "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+    <appender name="mainAppender" class="org.apache.log4j.DailyRollingFileAppender">
+        <errorHandler class="org.apache.log4j.helpers.OnlyOnceErrorHandler" />
+        <param name="File" value="/codingwater/logs/jobhunter/main.log" />
+        <param name="Append" value="true" />
+        <param name="Threshold" value="INFO" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[jobhunter]%d %-5p [%c %L] %m%n" />
+        </layout>
+    </appender>
+
+    <appender name="spiderLoggerAppender" class="org.apache.log4j.DailyRollingFileAppender">
+        <errorHandler class="org.apache.log4j.helpers.OnlyOnceErrorHandler" />
+        <param name="File" value="/codingwater/logs/jobhunter/spider.log" />
+        <param name="Append" value="true" />
+        <param name="Threshold" value="INFO" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[jobhunter]%d %-5p [%c %L] %m%n" />
+        </layout>
+    </appender>
+
+    <logger name="org.springframework.web.context.ContextLoader" additivity="false">
+        <level value="debug" />
+        <appender-ref ref="mainAppender" />
+    </logger>
+
+    <logger name="org.springframework.web" additivity="false">
+        <level value="debug" />
+        <appender-ref ref="mainAppender" />
+    </logger>
+
+    <logger name="org.springframework.web.servlet" additivity="false">
+        <level value="debug" />
+        <appender-ref ref="mainAppender" />
+    </logger>
+
+    <root>
+        <priority value="info" />
+        <appender-ref ref="mainAppender" />
+    </root>
+
+    <logger name="spiderLogger" additivity="false">
+        <level value="info" />
+        <appender-ref ref="spiderLoggerAppender" />
+    </logger>
+
+</log4j:configuration>

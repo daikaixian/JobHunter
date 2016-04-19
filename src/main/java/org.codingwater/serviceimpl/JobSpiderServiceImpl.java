@@ -7,6 +7,8 @@ import org.codingwater.service.IJobSpiderService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,6 +24,8 @@ public class JobSpiderServiceImpl implements IJobSpiderService {
   private ObjectMapper mapper = new ObjectMapper();
   private ModelMapper modelMapper = new ModelMapper();
 
+  Logger logger = LoggerFactory.getLogger(JobSpiderServiceImpl.class);
+
   @Override
   public List<LagouJobInfo> fetchJobInfosFromLagou(String city, String keyword,
       int pageNumber, String monthlySalary, String workYears) {
@@ -30,12 +34,13 @@ public class JobSpiderServiceImpl implements IJobSpiderService {
     String queryUrl = String.format("http://www.lagou.com/jobs/positionAjax.json"
         + "?city=%s&first=false&pn=%d&kd=%s&gj=%s&yx=%s",
         city, pageNumber, keyword, workYears, monthlySalary);
-    System.out.println(queryUrl);
+    logger.info(queryUrl);
     Document doc = null;
     try {
       doc = Jsoup.connect(queryUrl).ignoreContentType(true).get();
     } catch (IOException e) {
       //todo logger
+      logger.error("connect error while try to fetch from lagou.com", e);
     }
     System.out.println(doc.body().text());
 
@@ -48,6 +53,7 @@ public class JobSpiderServiceImpl implements IJobSpiderService {
       jobIndoList = (List<Map<String, Object>>) contentMap.get("result");
     } catch (Exception e) {
       //todo logger
+      logger.error("data transfor error.", e);
     }
     System.out.println("joblist.size = " + jobIndoList.size());
 

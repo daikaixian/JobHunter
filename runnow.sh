@@ -1,7 +1,7 @@
 #!/bin/sh
 
 pushd "$(dirname "$0")"
-port="8390"
+port="8080"
 mvnexe="mvn"
 
 while getopts "p:P:t:d" arg
