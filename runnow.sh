@@ -21,5 +21,5 @@ do
 done
 
 mvn clean
-$mvnexe -U jetty:run-exploded -Djetty.port=$port
+$mvnexe -U jetty:run-exploded -Djetty.port=$port -Dmaven.test.skip=true
 popd

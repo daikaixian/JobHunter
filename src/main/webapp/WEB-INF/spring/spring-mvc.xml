@@ -18,8 +18,8 @@
         http://www.springframework.org/schema/context/spring-context.xsd">
     <mvc:annotation-driven />
 
-    <!-- 扫描controller（controller层注入） -->
-    <context:component-scan base-package="org.codingwater.controller"/>
+    <!-- 扫描,注入 -->
+    <context:component-scan base-package="org.codingwater"/>
 
 
     <!--

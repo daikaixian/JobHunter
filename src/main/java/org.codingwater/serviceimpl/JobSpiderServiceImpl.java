@@ -9,6 +9,7 @@ import org.jsoup.nodes.Document;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.Map;
 /**
  * Created by water on 4/19/16.
  */
+@Service
 public class JobSpiderServiceImpl implements IJobSpiderService {
 
   //todo  need change to Autowired.
