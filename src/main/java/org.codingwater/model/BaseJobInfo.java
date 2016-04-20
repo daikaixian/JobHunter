@@ -16,6 +16,15 @@ public class BaseJobInfo {
   private String industryField;
 
   private Integer infoSource;
+  private String detailPage;
+
+  public String getDetailPage() {
+    return detailPage;
+  }
+
+  public void setDetailPage(String detailPage) {
+    this.detailPage = detailPage;
+  }
 
   public Long getPositionId() {
     return positionId;

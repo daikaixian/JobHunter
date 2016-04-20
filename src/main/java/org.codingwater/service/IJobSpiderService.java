@@ -13,9 +13,4 @@ public interface IJobSpiderService {
   List<LagouJobInfo> fetchJobInfosFromLagou(String city, String keyword,
       int pageNumber, String monthlySalary, String workYears);
 
-
-
-
-
-
 }

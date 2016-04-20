@@ -16,11 +16,11 @@
         http://www.springframework.org/schema/cache/spring-cache.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
-    <mvc:annotation-driven />
+
+    <mvc:annotation-driven/>
 
     <!-- 扫描,注入 -->
     <context:component-scan base-package="org.codingwater"/>
-
 
     <!--
     View resolvers can also be configured with ResourceBundles or XML files. If you need
@@ -55,7 +55,23 @@
         </property>
     </bean>
 
+    <!--<mvc:annotation-driven enable-matrix-variables="true">-->
+        <!--<mvc:message-converters register-defaults="true">-->
+            <!--<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">-->
+                <!--<property name="objectMapper" ref="mvnObjectMapper" />-->
+            <!--</bean>-->
+        <!--</mvc:message-converters>-->
+    <!--</mvc:annotation-driven>-->
+
+    <!--<bean id="mvnObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper">-->
+        <!--<property name="serializationInclusion">-->
+            <!--<value type="com.fasterxml.jackson.annotation.JsonInclude.Include">NON_NULL</value>-->
+        <!--</property>-->
+    <!--</bean>-->
+
     <bean id="fmXmlEscape" class="freemarker.template.utility.XmlEscape"/>
+    <bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper" />
+    <bean id="modelMapper" class="org.modelmapper.ModelMapper" />
 
 
 </beans>
