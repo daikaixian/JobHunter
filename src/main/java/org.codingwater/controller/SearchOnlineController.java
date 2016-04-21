@@ -44,8 +44,7 @@ public class SearchOnlineController {
     }
 
     List<LagouJobInfo> ret =
-        jobSpiderService.fetchJobInfosFromLagou(city, keyword, pageNumber, workYear, monthlySalary);
-
+        jobSpiderService.fetchJobInfosFromLagou(city, keyword, pageNumber, monthlySalary, workYear);
     boolean hasMore = false;
     int limit = 0;
     long totalCount = 0;

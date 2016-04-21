@@ -24,7 +24,7 @@ public class JobSpiderServiceImplTest extends BaseTest{
 
   @Test
   public void testFetchJobInfosFromLagou() throws Exception {
-    List<LagouJobInfo> ret = jobSpiderService.fetchJobInfosFromLagou("上海", "Java", 1, "", "");
+    List<LagouJobInfo> ret = jobSpiderService.fetchJobInfosFromLagou("上海", "Java", 1, "10k-15k", "");
     Assert.assertNotEquals(0, ret.size());
 
   }

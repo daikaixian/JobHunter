@@ -103,7 +103,7 @@ public class Java8Test {
     List<Integer> list = Arrays.asList(1, 2, 3, 4);
 //    list.forEach(l -> System.out.println(l.intValue()));
 
-    Predicate<Integer> predicate = p -> p.intValue() >2;
+    Predicate<Integer> predicate = p -> p.intValue() > 2;
 
     list.stream().filter(predicate).forEach(Integer :: intValue);
     list.stream().filter(predicate).forEach(l -> System.out.println(l.intValue()));
