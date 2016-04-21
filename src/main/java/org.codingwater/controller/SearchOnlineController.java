@@ -8,11 +8,11 @@ import org.codingwater.model.apiresp.APIListResponseDTO;
 import org.codingwater.service.IJobSpiderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.util.List;
 
@@ -27,7 +27,8 @@ public class SearchOnlineController {
   private IJobSpiderService jobSpiderService;
 
   @RequestMapping(value = "/")
-  public String index() {
+  public String index(Model model) {
+    model.addAttribute("number", 1);
     return "index";
   }
 

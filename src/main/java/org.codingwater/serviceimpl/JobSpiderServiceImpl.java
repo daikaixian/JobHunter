@@ -56,24 +56,15 @@ public class JobSpiderServiceImpl implements IJobSpiderService {
     String queryUrl = String.format("http://www.lagou.com/jobs/positionAjax.json"
         + "?city=%s&first=true&px=new&pn=%d&kd=%s&gj=%s&yx=%s",
         city, pageNumber, keyword, workYears, monthlySalary);
-    logger.info(queryUrl);
-    Document doc = null;
-    try {
-      doc = Jsoup.connect(queryUrl).ignoreContentType(true).timeout(10 * 1000).get();
-    } catch (IOException e) {
-      logger.error("connect error while try to fetch from lagou.com", e);
-    }
-    if (doc == null) {
-      logger.info("请求异常, 抓取数据为空");
-      return new ArrayList<>();
-    }
-    System.out.println(doc.body().text());
+
+    String resultData = fetchWithCondition(queryUrl);
 
     Map<String, Object> resultMap =  null;
     Map<String, Object> contentMap = null;
     List<Map<String, Object>> jobIndoList = null;
     try {
-      resultMap = mapper.readValue(doc.body().text(), Map.class);
+      //解析api数据
+      resultMap = mapper.readValue(resultData, Map.class);
       contentMap = (Map<String, Object>) resultMap.get("content");
       jobIndoList = (List<Map<String, Object>>) contentMap.get("result");
     } catch (Exception e) {
@@ -91,5 +82,21 @@ public class JobSpiderServiceImpl implements IJobSpiderService {
       lagouJobInfoList.add(lagouJobInfo);
     }
     return lagouJobInfoList;
+  }
+
+  private String fetchWithCondition(String queryUrl) {
+    logger.info(queryUrl);
+
+    Document doc = null;
+    try {
+      doc = Jsoup.connect(queryUrl).ignoreContentType(true).timeout(10 * 1000).get();
+    } catch (IOException e) {
+      logger.error("connect error while try to fetch from lagou.com", e);
+    }
+    if (doc == null) {
+      logger.info("请求异常, 抓取数据为空");
+      return "";
+    }
+    return doc.body().text();
   }
 }
