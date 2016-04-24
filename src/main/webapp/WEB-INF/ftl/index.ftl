@@ -4,25 +4,52 @@
 </head>
 
 <script type="text/javascript">
-   alert("test");
+   // alert("test");
+var currentPage = 0;
 
-function clicktest(){
+function prePage(){
+	if(currentPage > 1) {
+		currentPage-- ;
+		$.get("/job/data/lagou/?ct=上海&kw=java&pn=" + currentPage, function(data,status) {
+    		var object_list = data.data.object_list
+			$("#lagoudiv").empty();
+    		$.each(object_list, function(i, item) {
+    			$("#lagoudiv").append("<li>positionId:" + item.positionId + "</li>");
+    		});
+  		});
+	} else {
+		alert("已经是第一页");
+	}
+  	
+}
 
-  $.get("/job/data/lagou/?ct=上海&kw=java&pn=1",function(data,status){
-    alert("Data: " + data + "\nStatus: " + status);
-  });
+function nextPage() {
+	currentPage++ ;
+	$.get("/job/data/lagou/?ct=上海&kw=java&pn=" + currentPage, function(data, status){
+		var object_list = data.data.object_list
+		$("#lagoudiv").empty();
+    	$.each(object_list, function(i, item) {
+    		$("#lagoudiv").append("<li>positionId:" + item.positionId + "</li>");
+    	});
+
+  	});
 }
 
 </script>
 
 <body>
-<button onclick = "clicktest()">test</button>
+<button onclick = "prePage()">上一页</button>
+
+<button onclick = "nextPage()">下一页</button>
 
 
-haha~
+<br>${number}<br>
 
-${number}
+<div id="lagoudiv">
+
+</div>
+
+
 </body>
-
 
 </html>

@@ -1,6 +1,8 @@
 package org.codingwater.serviceimpl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import org.codingwater.model.LagouJobInfo;
 import org.codingwater.service.IJobSpiderService;
@@ -13,11 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
 
 /**
  * Created by water on 4/19/16.
@@ -58,6 +61,13 @@ public class JobSpiderServiceImpl implements IJobSpiderService {
         city, pageNumber, keyword, workYears, monthlySalary);
 
     String resultData = fetchWithCondition(queryUrl);
+    List<LagouJobInfo> lagouJobInfoList = getJobListFromJson(resultData);
+    
+    return lagouJobInfoList;
+  }
+
+  private List<LagouJobInfo> getJobListFromJson(String resultData) {
+    List<LagouJobInfo> ret = Lists.newArrayList();
 
     Map<String, Object> resultMap =  null;
     Map<String, Object> contentMap = null;
@@ -71,17 +81,64 @@ public class JobSpiderServiceImpl implements IJobSpiderService {
       logger.error("data transfor error.", e);
     }
 
-    List<LagouJobInfo> lagouJobInfoList = new ArrayList<>();
     if (jobIndoList == null) {
-      return lagouJobInfoList;
+      return ret;
     }
     for (Map<String, Object> job : jobIndoList) {
       LagouJobInfo lagouJobInfo = modelMapper.map(job, LagouJobInfo.class);
       lagouJobInfo.setDetailPage(String.format("http://www.lagou.com/jobs/%s.html", lagouJobInfo
           .getPositionId()));
-      lagouJobInfoList.add(lagouJobInfo);
+      ret.add(lagouJobInfo);
     }
-    return lagouJobInfoList;
+    return ret;
+  }
+
+  @Override
+  public void fetchYesterdayDataFromLagou(String keyword) {
+    //根据时间戳,抓取昨天的数据.
+
+    Calendar cal = Calendar.getInstance();
+    cal.set(Calendar.HOUR_OF_DAY, 0);
+    cal.set(Calendar.MINUTE, 0);
+    cal.set(Calendar.SECOND, 0);
+    cal.set(Calendar.MILLISECOND, 0);
+    //获取今日凌晨时间戳
+    long todayMidNightTimeStamp = cal.getTimeInMillis();
+
+    //获取昨日凌晨时间戳
+    cal.add(Calendar.DATE, -1);
+    long yesterdayMidNightTimeStamp = cal.getTimeInMillis();
+
+    int pageNumber = 1;
+    boolean isContinue = true;
+    Predicate<LagouJobInfo> predicate = p -> p.getCreateTimeSort() > yesterdayMidNightTimeStamp
+        && p.getCreateTimeSort() < todayMidNightTimeStamp;
+
+    List<LagouJobInfo> yesterdayJobList = Lists.newArrayList();
+    while (isContinue) {
+      String queryUrl = String.format("http://www.lagou.com/jobs/positionAjax.json"
+          + "?first=true&px=new&kd=%s&pn=%d&", keyword, pageNumber);
+
+      String resultData = fetchWithCondition(queryUrl);
+      List<LagouJobInfo> lagouJobInfoList = getJobListFromJson(resultData);
+
+      //过滤
+      List<LagouJobInfo> filtedList = lagouJobInfoList.stream().filter(predicate)
+          .collect(Collectors.toList());
+
+      filtedList.forEach(job -> System.out.println(job.getCreateTime()));
+      yesterdayJobList.addAll(filtedList);
+
+      LagouJobInfo lastOne = Iterables.getLast(lagouJobInfoList);
+      if (lastOne.getCreateTimeSort() < yesterdayMidNightTimeStamp) {
+        isContinue = false;
+      }
+      pageNumber ++ ;
+    }
+
+    System.out.println("==============over===================");
+    System.out.println(yesterdayJobList.size());
+
   }
 
   private String fetchWithCondition(String queryUrl) {

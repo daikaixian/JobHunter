@@ -12,6 +12,7 @@ public class BaseJobInfo {
   private String workYear;
   private String city;
   private String createTime;
+  private Long createTimeSort;
   private String education;
   private String industryField;
 
@@ -106,6 +107,14 @@ public class BaseJobInfo {
     this.infoSource = infoSource;
   }
 
+  public Long getCreateTimeSort() {
+    return createTimeSort;
+  }
+
+  public void setCreateTimeSort(Long createTimeSort) {
+    this.createTimeSort = createTimeSort;
+  }
+
   @Override
   public String toString() {
     return "BaseJobInfo{"
@@ -116,6 +125,7 @@ public class BaseJobInfo {
         + ", workYear='" + workYear + '\''
         + ", city='" + city + '\''
         + ", createTime='" + createTime + '\''
+        + ", createTimeSort='" + createTimeSort + '\''
         + ", education='" + education + '\''
         + ", industryField='" + industryField + '\''
         + ", infoSource=" + infoSource

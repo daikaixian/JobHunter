@@ -1,16 +1,13 @@
 package org.codingwater.serviceimpl;
 
 import org.codingwater.BaseTest;
-import org.codingwater.model.BaseJobInfo;
 import org.codingwater.model.LagouJobInfo;
 import org.codingwater.service.IJobSpiderService;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.Calendar;
 import java.util.List;
 
 
@@ -28,4 +25,29 @@ public class JobSpiderServiceImplTest extends BaseTest{
     Assert.assertNotEquals(0, ret.size());
 
   }
+
+
+  @Test
+  public void testCalendar() {
+
+    Calendar cal = Calendar.getInstance();
+    cal.set(Calendar.HOUR_OF_DAY, 0);
+    cal.set(Calendar.MINUTE, 0);
+    cal.set(Calendar.SECOND, 0);
+    cal.set(Calendar.MILLISECOND, 0);
+    //获取今日凌晨时间戳
+    System.out.println(cal.getTimeInMillis());
+
+    //获取昨日凌晨时间戳
+    cal.add(Calendar.DATE, -1);
+    System.out.println(cal.getTimeInMillis());
+  }
+
+
+  @Test
+  public void testFetchYesterdayDataFromLagou() {
+
+    jobSpiderService.fetchYesterdayDataFromLagou("java");
+  }
+
 }
