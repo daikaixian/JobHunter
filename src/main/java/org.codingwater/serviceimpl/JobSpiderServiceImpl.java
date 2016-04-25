@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
+import org.codingwater.dao.BaseJobInfoDAO;
+import org.codingwater.model.BaseJobInfo;
 import org.codingwater.model.LagouJobInfo;
 import org.codingwater.service.IJobSpiderService;
 import org.jsoup.Jsoup;
@@ -29,6 +31,8 @@ import java.util.stream.Collectors;
 @Service
 public class JobSpiderServiceImpl implements IJobSpiderService {
 
+  @Autowired
+  BaseJobInfoDAO baseJobInfoDAO;
 
   private ObjectMapper mapper = new ObjectMapper();
 
@@ -87,8 +91,9 @@ public class JobSpiderServiceImpl implements IJobSpiderService {
     }
     for (Map<String, Object> job : jobIndoList) {
       LagouJobInfo lagouJobInfo = modelMapper.map(job, LagouJobInfo.class);
-      lagouJobInfo.setDetailPage(String.format("http://www.lagou.com/jobs/%s.html", lagouJobInfo
-          .getPositionId()));
+      lagouJobInfo.setDetailPage(String.format("http://www.lagou.com/jobs/%s.html",
+          lagouJobInfo.getPositionId()));
+      lagouJobInfo.setPositionId("L" + lagouJobInfo.getPositionId());
       ret.add(lagouJobInfo);
     }
     return ret;
@@ -118,13 +123,13 @@ public class JobSpiderServiceImpl implements IJobSpiderService {
     List<LagouJobInfo> yesterdayJobList = Lists.newArrayList();
     while (isContinue) {
       String queryUrl = String.format("http://www.lagou.com/jobs/positionAjax.json"
-          + "?first=true&px=new&kd=%s&pn=%d&", keyword, pageNumber);
+          + "?first=true&px=new&kd=%s&pn=%d", keyword, pageNumber);
 
       String resultData = fetchWithCondition(queryUrl);
       List<LagouJobInfo> lagouJobInfoList = getJobListFromJson(resultData);
 
       if (CollectionUtils.isEmpty(lagouJobInfoList)) {
-        System.out.println("no data fetched");
+        System.out.println("no data fetched:" + queryUrl);
         return;
       }
 
@@ -133,8 +138,11 @@ public class JobSpiderServiceImpl implements IJobSpiderService {
           .collect(Collectors.toList());
 
       filtedList.forEach(job -> System.out.println(
-          job.getCompanyName() + ":" + job.getCity() + ":" + job.getCreateTime()));
+          job.getCompanyName() + ":" + job.getCity() + ":"
+              + job.getCreateTime() + ":" + job.getCreateTimeSort()));
       yesterdayJobList.addAll(filtedList);
+      //存入数据库
+      saveToDataBase(filtedList);
 
       LagouJobInfo lastOne = Iterables.getLast(lagouJobInfoList);
       if (lastOne.getCreateTimeSort() < yesterdayMidNightTimeStamp) {
@@ -144,7 +152,17 @@ public class JobSpiderServiceImpl implements IJobSpiderService {
     }
 
     System.out.println("==============over===================");
-    System.out.println(yesterdayJobList.size());
+    System.out.println("本次爬取数据:" + yesterdayJobList.size());
+
+  }
+
+  private void saveToDataBase(List<LagouJobInfo> yesterdayJobList) {
+    for (LagouJobInfo job : yesterdayJobList) {
+      if (baseJobInfoDAO.findPositionById(job.getPositionId()) == null) {
+        baseJobInfoDAO.savePosition(job);
+      }
+    }
+
 
   }
 

@@ -5,7 +5,7 @@ package org.codingwater.model;
  */
 public class BaseJobInfo {
 
-  private Long positionId;
+  private String positionId;
   private String companyName;
   private String positionName;
   private String salary;
@@ -27,11 +27,11 @@ public class BaseJobInfo {
     this.detailPage = detailPage;
   }
 
-  public Long getPositionId() {
+  public String getPositionId() {
     return positionId;
   }
 
-  public void setPositionId(Long positionId) {
+  public void setPositionId(String positionId) {
     this.positionId = positionId;
   }
 

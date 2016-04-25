@@ -8,6 +8,8 @@ import org.omg.CORBA.PUBLIC_MEMBER;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.Map;
+
 
 /**
  * Created by water on 4/24/16.
@@ -24,8 +26,13 @@ public class BaseJobInfoDAO {
 
   public int savePosition(BaseJobInfo jobInfo) {
     int result = writeTpl.insert("position.insertPosition", jobInfo);
-    System.out.println("fuck spring ");
-    return 1;
+    return result;
+  }
+
+  public BaseJobInfo findPositionById(String positionId) {
+    Map<String, Object> param = Maps.newHashMap();
+    param.put("positionId", positionId);
+    return readTpl.selectOne("position.findPositionById", param);
   }
 
 
