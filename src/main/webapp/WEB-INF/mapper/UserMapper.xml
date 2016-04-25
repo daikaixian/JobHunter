@@ -64,5 +64,11 @@
         )
     </insert>
 
+    <select id="queryPositionsWithCondition" resultMap="RM-POSITION">
+        SELECT <include refid="POSITION-COLUMNS"/>
+        FROM t_position
+        WHERE city = #{city} AND work_year = #{workYear} AND position_name LIKE #{keyword}
+
+    </select>
 
 </mapper>

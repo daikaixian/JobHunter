@@ -8,6 +8,7 @@ import org.omg.CORBA.PUBLIC_MEMBER;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -36,4 +37,13 @@ public class BaseJobInfoDAO {
   }
 
 
+  public List<BaseJobInfo> queryPositionsWithCondition(String city,
+      String keyword, String workYear) {
+    Map<String, Object> param = Maps.newHashMap();
+    param.put("city", city);
+    param.put("keyword", keyword);
+    param.put("workYear", workYear);
+
+    return readTpl.selectList("position.queryPositionsWithCondition", param);
+  }
 }
