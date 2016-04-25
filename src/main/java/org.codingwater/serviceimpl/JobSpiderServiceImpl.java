@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -122,11 +123,17 @@ public class JobSpiderServiceImpl implements IJobSpiderService {
       String resultData = fetchWithCondition(queryUrl);
       List<LagouJobInfo> lagouJobInfoList = getJobListFromJson(resultData);
 
+      if (CollectionUtils.isEmpty(lagouJobInfoList)) {
+        System.out.println("no data fetched");
+        return;
+      }
+
       //过滤
       List<LagouJobInfo> filtedList = lagouJobInfoList.stream().filter(predicate)
           .collect(Collectors.toList());
 
-      filtedList.forEach(job -> System.out.println(job.getCreateTime()));
+      filtedList.forEach(job -> System.out.println(
+          job.getCompanyName() + ":" + job.getCity() + ":" + job.getCreateTime()));
       yesterdayJobList.addAll(filtedList);
 
       LagouJobInfo lastOne = Iterables.getLast(lagouJobInfoList);

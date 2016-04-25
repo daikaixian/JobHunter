@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <!DOCTYPE mapper
+                PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="position">
+
+
+    <resultMap id="RM-POSITION" type="BaseJobInfo">
+        <result property="positionId" column="position_id"/>
+        <result property="companyName" column="company_name"/>
+        <result property="positionName" column="position_name"/>
+        <result property="salary" column="salary"/>
+        <result property="workYear" column="work_year" />
+        <result property="city" column="city" />
+        <result property="createTime" column="create_time"/>
+        <result property="createTimeSort" column="create_time_sort"/>
+        <result property="education" column="education"/>
+        <result property="industryField" column="industry_field"/>
+        <result property="infoSource" column="info_source"/>
+        <result property="detailPage" column="detail_page"/>
+
+    </resultMap>
+
+    <sql id="POSITION-COLUMNS">
+      position_id,
+      company_name,
+      position_name,
+      salary,
+      work_year,
+      city,
+      create_time,
+      create_time_sort,
+      education,
+      industry_field,
+      info_source,
+      detail_page
+    </sql>
+
+    <select id="findPositionById" resultMap="RM-POSITION">
+        SELECT <include refid="POSITION-COLUMNS"/>
+        FROM t_position
+        WHERE position_id = #{positionId}
+    </select>
+
+    <insert id="insertPosition" parameterType="BaseJobInfo" >
+        insert into t_position(
+      <include refid="POSITION-COLUMNS"/>
+      )
+        values
+        (
+        #{positionId},
+        #{companyName},
+        #{positionName},
+        #{salary},
+        #{workYear},
+        #{city},
+        #{createTime},
+        #{createTimeSort},
+        #{education},
+        #{industryField},
+        #{infoSource},
+        #{detailPage}
+        )
+    </insert>
+
+
+</mapper>

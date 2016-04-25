@@ -10,7 +10,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({
-    "file:src/test/spring-test.xml"
+    "file:src/test/spring-test.xml",
+    "file:src/test/spring-mybatis.xml"
 })
 public class BaseTest {
 
