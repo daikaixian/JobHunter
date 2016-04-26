@@ -18,6 +18,8 @@
         http://www.springframework.org/schema/context/spring-context.xsd">
 
     <mvc:annotation-driven/>
+    <mvc:resources mapping="/js/**" location="/js/" />
+    <mvc:default-servlet-handler />
 
     <!-- 扫描,注入 -->
     <context:component-scan base-package="org.codingwater"/>

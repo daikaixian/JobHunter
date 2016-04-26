@@ -5,7 +5,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import org.codingwater.dao.BaseJobInfoDAO;
-import org.codingwater.model.BaseJobInfo;
 import org.codingwater.model.LagouJobInfo;
 import org.codingwater.service.IJobSpiderService;
 import org.jsoup.Jsoup;
@@ -112,10 +111,10 @@ public class JobSpiderServiceImpl implements IJobSpiderService {
     long todayMidNightTimeStamp = cal.getTimeInMillis();
 
     //获取昨日凌晨时间戳
-    cal.add(Calendar.DATE, -1);
+    cal.add(Calendar.DATE, -7);  //抓一星期的数据
     long yesterdayMidNightTimeStamp = cal.getTimeInMillis();
 
-    int pageNumber = 1;
+    int pageNumber = 250;
     boolean isContinue = true;
     Predicate<LagouJobInfo> predicate = p -> p.getCreateTimeSort() > yesterdayMidNightTimeStamp
         && p.getCreateTimeSort() < todayMidNightTimeStamp;
@@ -129,8 +128,27 @@ public class JobSpiderServiceImpl implements IJobSpiderService {
       List<LagouJobInfo> lagouJobInfoList = getJobListFromJson(resultData);
 
       if (CollectionUtils.isEmpty(lagouJobInfoList)) {
-        System.out.println("no data fetched:" + queryUrl);
-        return;
+        //retry 5 times
+        for (int i = 0; i < 5 ; i ++) {
+          System.out.println("sleep 10s");
+
+          try {
+            Thread.sleep(10000);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+
+          System.out.println("retry :" + queryUrl);
+          lagouJobInfoList = getJobListFromJson(fetchWithCondition(queryUrl));
+          if (lagouJobInfoList.size() > 0) {
+            break;
+          }
+        }
+        if (lagouJobInfoList.size() == 0) {
+          System.out.println("failed");
+          return;
+        }
+
       }
 
       //过滤

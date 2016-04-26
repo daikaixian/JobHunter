@@ -81,18 +81,15 @@
           mapperLocations为所有mapper-->
 
 
+    <!--&lt;!&ndash; spring与mybatis整合配置，扫描所有dao &ndash;&gt;-->
+    <!--<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer"-->
+          <!--p:basePackage="org.codingwater"-->
+          <!--p:sqlSessionFactoryBeanName="sqlSessionFactory"/>-->
 
-    <!-- spring与mybatis整合配置，扫描所有dao -->
-    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer"
-          p:basePackage="org.codingwater"
-          p:sqlSessionFactoryBeanName="sqlSesionFactory"/>
-
-
-
-    <!-- 对数据源进行事务管理 -->
-    <bean id="transactionManager"
-          class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
-          p:dataSource-ref="dataSource"/>
+    <!--&lt;!&ndash; 对数据源进行事务管理 &ndash;&gt;-->
+    <!--<bean id="transactionManager"-->
+          <!--class="org.springframework.jdbc.datasource.DataSourceTransactionManager"-->
+          <!--p:dataSource-ref="dataSource"/>-->
 
 
 </beans>
