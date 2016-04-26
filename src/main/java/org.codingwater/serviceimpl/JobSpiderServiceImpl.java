@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
+import org.codingwater.concurrency.FetchThread;
 import org.codingwater.dao.BaseJobInfoDAO;
 import org.codingwater.model.LagouJobInfo;
 import org.codingwater.service.IJobSpiderService;
@@ -70,7 +71,7 @@ public class JobSpiderServiceImpl implements IJobSpiderService {
     return lagouJobInfoList;
   }
 
-  private List<LagouJobInfo> getJobListFromJson(String resultData) {
+  public List<LagouJobInfo> getJobListFromJson(String resultData) {
     List<LagouJobInfo> ret = Lists.newArrayList();
 
     Map<String, Object> resultMap =  null;
@@ -111,7 +112,7 @@ public class JobSpiderServiceImpl implements IJobSpiderService {
     long todayMidNightTimeStamp = cal.getTimeInMillis();
 
     //获取昨日凌晨时间戳
-    cal.add(Calendar.DATE, -7);  //抓一星期的数据
+    cal.add(Calendar.DATE, -1);
     long yesterdayMidNightTimeStamp = cal.getTimeInMillis();
 
     int pageNumber = 250;
@@ -174,7 +175,22 @@ public class JobSpiderServiceImpl implements IJobSpiderService {
 
   }
 
-  private void saveToDataBase(List<LagouJobInfo> yesterdayJobList) {
+  @Override
+  public void multiThreadFetch(String keyword) {
+
+    Thread fetchThreadOne = new Thread(new FetchThread("java", 1, 100, this));
+    Thread fetchThreadTwo = new Thread(new FetchThread("java", 101, 100, this));
+    Thread fetchThreadThree = new Thread(new FetchThread("java", 201, 100, this));
+    Thread fetchThreadFour = new Thread(new FetchThread("java", 301, 100, this));
+
+    fetchThreadOne.start();
+    fetchThreadTwo.start();
+    fetchThreadThree.start();
+    fetchThreadFour.start();
+
+  }
+
+  public void saveToDataBase(List<LagouJobInfo> yesterdayJobList) {
     for (LagouJobInfo job : yesterdayJobList) {
       if (baseJobInfoDAO.findPositionById(job.getPositionId()) == null) {
         baseJobInfoDAO.savePosition(job);
@@ -184,7 +200,7 @@ public class JobSpiderServiceImpl implements IJobSpiderService {
 
   }
 
-  private String fetchWithCondition(String queryUrl) {
+  public String fetchWithCondition(String queryUrl) {
     logger.info(queryUrl);
 
     Document doc = null;

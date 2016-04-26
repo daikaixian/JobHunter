@@ -15,5 +15,12 @@ public interface IJobSpiderService {
 
   void fetchYesterdayDataFromLagou(String keyword);
 
+  void multiThreadFetch(String keyword);
 
+
+  String fetchWithCondition(String queryUrl);
+
+  List<LagouJobInfo> getJobListFromJson(String resultData);
+
+  void saveToDataBase(List<LagouJobInfo> filtedList);
 }

@@ -50,4 +50,13 @@ public class JobSpiderServiceImplTest extends BaseTest{
     jobSpiderService.fetchYesterdayDataFromLagou("java");
   }
 
+
+  @Test
+  public void testMultiFetch() throws InterruptedException {
+
+    jobSpiderService.multiThreadFetch("java");
+
+    Thread.sleep(200000);//sleep 100s
+
+  }
 }
