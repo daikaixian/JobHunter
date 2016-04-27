@@ -41,7 +41,7 @@ public class BaseJobInfoDAO {
       String keyword, String workYear) {
     Map<String, Object> param = Maps.newHashMap();
     param.put("city", city);
-    param.put("keyword", keyword);
+    param.put("keyword", "%" + keyword + "%");
     param.put("workYear", workYear);
 
     return readTpl.selectList("position.queryPositionsWithCondition", param);

@@ -54,9 +54,9 @@ public class JobSpiderServiceImplTest extends BaseTest{
   @Test
   public void testMultiFetch() throws InterruptedException {
 
-    jobSpiderService.multiThreadFetch("java");
+    jobSpiderService.multiThreadFetch("php");
 
-    Thread.sleep(200000);//sleep 100s
+    Thread.sleep(500000);//sleep 100s
 
   }
 }

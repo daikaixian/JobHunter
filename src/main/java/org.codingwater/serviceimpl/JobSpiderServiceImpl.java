@@ -115,7 +115,7 @@ public class JobSpiderServiceImpl implements IJobSpiderService {
     cal.add(Calendar.DATE, -1);
     long yesterdayMidNightTimeStamp = cal.getTimeInMillis();
 
-    int pageNumber = 250;
+    int pageNumber = 20;
     boolean isContinue = true;
     Predicate<LagouJobInfo> predicate = p -> p.getCreateTimeSort() > yesterdayMidNightTimeStamp
         && p.getCreateTimeSort() < todayMidNightTimeStamp;
@@ -178,10 +178,10 @@ public class JobSpiderServiceImpl implements IJobSpiderService {
   @Override
   public void multiThreadFetch(String keyword) {
 
-    Thread fetchThreadOne = new Thread(new FetchThread("java", 1, 100, this));
-    Thread fetchThreadTwo = new Thread(new FetchThread("java", 101, 100, this));
-    Thread fetchThreadThree = new Thread(new FetchThread("java", 201, 100, this));
-    Thread fetchThreadFour = new Thread(new FetchThread("java", 301, 100, this));
+    Thread fetchThreadOne = new Thread(new FetchThread(keyword, 1, 100, this));
+    Thread fetchThreadTwo = new Thread(new FetchThread(keyword, 101, 100, this));
+    Thread fetchThreadThree = new Thread(new FetchThread(keyword, 201, 100, this));
+    Thread fetchThreadFour = new Thread(new FetchThread(keyword, 301, 100, this));
 
     fetchThreadOne.start();
     fetchThreadTwo.start();

@@ -2,6 +2,7 @@ package org.codingwater.serviceimpl;
 
 import org.codingwater.dao.BaseJobInfoDAO;
 import org.codingwater.model.BaseJobInfo;
+import org.codingwater.model.SalaryQueryResult;
 import org.codingwater.service.IReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jca.cci.core.InteractionCallback;
@@ -29,7 +30,8 @@ public class ReportServiceImpl implements IReportService {
    * @return 计算出来的平均工资.
    */
   @Override
-  public String calculateAverageSalary(String city, String keyword, String workYear) {
+  public SalaryQueryResult calculateAverageSalary(String city, String keyword, String workYear) {
+    SalaryQueryResult ret =  new SalaryQueryResult();
 
     //最终能得出的结论是:在所选城市,所属工种,以及所属工资经验中,查询了多少条数据,得出的平均工资是多少.
     //比如,上海,Java,1-3年,查到多少数据.平均工资多少
@@ -53,7 +55,13 @@ public class ReportServiceImpl implements IReportService {
 //    averageSalary = ((int)(averageSalary * 100))/100;
     System.out.println("加入平均值计算的职位一共" + totalCount + "个, 平均工资为:" + averageSalary + "k");
     System.out.println("over at : " + Calendar.getInstance().getTimeInMillis());
-    return null;
+
+    ret.setCity(city);
+    ret.setKeyword(keyword);
+    ret.setWorkYear(workYear);
+    ret.setTotalCount(totalCount);
+    ret.setAverageSalary(averageSalary);
+    return ret;
   }
 
   public double getIntSalaryFromString(String salary) {
