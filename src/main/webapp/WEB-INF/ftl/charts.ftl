@@ -4,17 +4,19 @@
     <meta charset="utf-8">
     <!-- 引入 ECharts 文件 -->
     <script src="/js/echarts.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css">
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 
 
 </header>
 
 <body>
+
+
+<br>
 <!-- 为 ECharts 准备一个具备大小（宽高）的Dom -->
-
-<h1>charts</h1>
-
 <div id="zhuzhuangtu" style="width: 600px;height:400px;"></div>
-
 <div id="binzhunagtu" style="width: 600px;height:400px;"></div>
 
 <script type="text/javascript">
@@ -90,12 +92,41 @@
     myChart2.setOption(option2);
 
 
-
-
-
-
-
 </script>
+
+
+
+<div>
+
+    <form action="/charts/" method="get">
+        <div>
+            <div class="col-xs-3">
+                <label for="sel1">工作城市:</label>
+                <select class="form-control" id="sel1" name="city">
+                    <option value="上海">上海</option>
+                    <option value="杭州">杭州</option>
+                    <option value="北京">北京</option>
+                    <option value="深圳">深圳</option>
+                </select>
+            </div>
+
+            <div class="col-xs-3">
+                <label for="sel2">岗位关键词:</label>
+                <select class="form-control" id="sel2" name="keyword">
+                    <option value="Java">Java</option>
+                    <option value="Python">Python</option>
+                    <option value="Php">Php</option>
+                    <option value="测试">测试</option>
+                </select>
+            </div>
+            <div class="col-xs-3">
+                <label for="sel2"> 查看报表</label><br>
+                <button type="submit" class="btn btn-success">确认</button>
+            </div>
+        </div>
+    </form>
+
+</div>
 
 </body>
 

@@ -1,6 +1,7 @@
 package org.codingwater.serviceimpl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.POJONode;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -19,8 +20,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -98,8 +101,9 @@ public class JobSpiderServiceImpl implements IJobSpiderService {
     //抓内推数据的url.
 
     String neiTuiUrl = String.format("http://www.neitui.me/"
-        + "?name=neitui&handle=lists&keyword=%s&kcity=%s&page=1&workage=%d%payrange=%s",
+        + "?name=neitui&handle=lists&keyword=%s&kcity=%s&page=%d&workage=%s&payrange=%s",
         keyword, city, pageNumber, workYears, monthlySalary);
+    logger.info(neiTuiUrl);
 
     Elements joblis = getLisFromDoc(neiTuiUrl);
     List<NeituiJobInfo> neituiJobInfos = getJobListFromElements(joblis);
@@ -113,23 +117,58 @@ public class JobSpiderServiceImpl implements IJobSpiderService {
     for (Element job : joblis) {
       NeituiJobInfo neituiJob = new NeituiJobInfo();
 
-      String createTime = job.getElementsByAttributeValue("class", "createtime").text();
-      Element elementLeft = job.getElementsByAttributeValue("class", "jobnote-l").get(0);
-      String positionId = elementLeft.getElementsByTag("a").get(0).attr("href").split("/")[2];
-      String positionName =
-          elementLeft.getElementsByAttributeValue("class","padding-r10").get(0).text();
-      String city = elementLeft.getElementsByAttributeValue("class","padding-r10").get(1).text();
-      String monthSalary = elementLeft.getElementsByAttributeValue("class","padding-r10").get(2)
-          .text();
-      String workYear = elementLeft.getElementsByAttributeValue("class","padding-r10").get(3)
-          .text();
-      Element elementRight = job.getElementsByAttributeValue("class", "jobnote-r").get(0);
-      String companyName = elementRight.getElementsByAttributeValue("class","padding-r10").get(0)
-          .text();
+      try {
+        String createTime = job.getElementsByAttributeValue("class", "createtime").text();
+        Element elementLeft = job.getElementsByAttributeValue("class", "jobnote-l").get(0);
+        String positionId = elementLeft.getElementsByTag("a").get(0).attr("href").split("/")[2];
+        String positionName =
+            elementLeft.getElementsByAttributeValue("class", "padding-r10").get(0).text();
+        String city = elementLeft.getElementsByAttributeValue("class", "padding-r10").get(1).text();
+        String monthSalary = elementLeft.getElementsByAttributeValue("class", "padding-r10").get(2)
+            .text();
+        String workYear = elementLeft.getElementsByAttributeValue("class", "padding-r10").get(3)
+            .text();
+        Element elementRight = job.getElementsByAttributeValue("class", "jobnote-r").get(0);
+        String companyName = elementRight.getElementsByAttributeValue("class", "padding-r10").get(0)
+            .text();
 
 
+        neituiJob.setPositionId("N" + positionId);
+        neituiJob.setDetailPage("http://www.neitui.me/j/" + positionId);
+        neituiJob.setPositionName(positionName);
+        neituiJob.setCity(removeBrackets(city));
+        neituiJob.setSalary(addUintForNeituiSalary(removeBrackets(monthSalary)));
+        neituiJob.setWorkYear(removeBrackets(workYear));
+        neituiJob.setCompanyName(companyName);
+        // set time
+        createTime = wrapCreateTimeForNeitui(createTime);
+        neituiJob.setCreateTime(createTime);
+        neituiJob.setCreateTimeSort(Timestamp.valueOf(createTime).getTime());
+
+        neituiJob.setEducation("");
+        neituiJob.setIndustryField("");
+      } catch (Exception e) {
+        System.out.println("跳过一条不合法的数据");
+      }
+
+      System.out.println(neituiJob);
+      ret.add(neituiJob);
     }
-    return null;
+    return ret;
+  }
+
+  private String wrapCreateTimeForNeitui(String createTime) {
+    //暂时将内推数据全部设置为16年每天8点钟发布.
+    return "2016-" + createTime + " 08:00:00";
+
+  }
+
+  private String addUintForNeituiSalary(String salary) {
+    return salary.replace("-", "k-");
+  }
+
+  private String removeBrackets(String originStr) {
+    return originStr.replace("[", "").replace("]", "");
   }
 
   private Elements getLisFromDoc(String neiTuiUrl) {
@@ -192,7 +231,7 @@ public class JobSpiderServiceImpl implements IJobSpiderService {
     cal.add(Calendar.DATE, -1);
     long yesterdayMidNightTimeStamp = cal.getTimeInMillis();
 
-    int pageNumber = 20;
+    int pageNumber = 1;
     boolean isContinue = true;
     Predicate<LagouJobInfo> predicate = p -> p.getCreateTimeSort() > yesterdayMidNightTimeStamp
         && p.getCreateTimeSort() < todayMidNightTimeStamp;
@@ -271,6 +310,45 @@ public class JobSpiderServiceImpl implements IJobSpiderService {
     for (LagouJobInfo job : yesterdayJobList) {
       if (baseJobInfoDAO.findPositionById(job.getPositionId()) == null) {
         baseJobInfoDAO.savePosition(job);
+      }
+    }
+  }
+
+
+
+  @Override
+  public void fetchAndSaveDataFromNeitui(String keyword) {
+
+    int pageNumber = 1;
+    boolean isContinue = true;
+
+    while (isContinue) {
+
+      String neituiQueryUrl = String.format("http://www.neitui.me/index"
+          + ".php?name=neitui&handle=lists&page=%d"
+          + "&kcity=全国&keyword=%s", pageNumber, keyword);
+
+      Elements joblis = getLisFromDoc(neituiQueryUrl);
+      if (joblis.size() == 0) {
+        System.out.println("没有数据了");
+        break;
+      }
+      List<NeituiJobInfo> neituiJobInfos = getJobListFromElements(joblis);
+      saveNeituiJobInfo(neituiJobInfos);
+      pageNumber ++;
+      //neitui只允许爬去30页的数据
+      if (pageNumber > 30) {
+        isContinue = false;
+      }
+    }
+  }
+
+  private void saveNeituiJobInfo(List<NeituiJobInfo> neituiJobInfos) {
+    for (NeituiJobInfo job : neituiJobInfos) {
+      if (!StringUtils.isEmpty(job.getPositionId())) {
+        if (baseJobInfoDAO.findPositionById(job.getPositionId()) == null) {
+          baseJobInfoDAO.savePosition(job);
+        }
       }
     }
 

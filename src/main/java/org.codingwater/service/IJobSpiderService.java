@@ -27,4 +27,6 @@ public interface IJobSpiderService {
   List<LagouJobInfo> getJobListFromJson(String resultData);
 
   void saveToDataBase(List<LagouJobInfo> filtedList);
+
+  void fetchAndSaveDataFromNeitui(String keyword);
 }

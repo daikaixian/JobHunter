@@ -2,6 +2,7 @@ package org.codingwater.serviceimpl;
 
 import org.codingwater.BaseTest;
 import org.codingwater.model.LagouJobInfo;
+import org.codingwater.model.NeituiJobInfo;
 import org.codingwater.service.IJobSpiderService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -28,6 +29,14 @@ public class JobSpiderServiceImplTest extends BaseTest{
 
 
   @Test
+  public void testFetchJobInfosFromNeitui() {
+    List<NeituiJobInfo> ret =
+        jobSpiderService.fetchJobInfosFromNeitui("上海", "Java", 1, "5-10", "2");
+    Assert.assertNotEquals(0, ret.size());
+
+  }
+
+  @Test
   public void testCalendar() {
 
     Calendar cal = Calendar.getInstance();
@@ -47,16 +56,38 @@ public class JobSpiderServiceImplTest extends BaseTest{
   @Test
   public void testFetchYesterdayDataFromLagou() {
 
-    jobSpiderService.fetchYesterdayDataFromLagou("java");
+//    jobSpiderService.fetchYesterdayDataFromLagou("Java");
+    System.out.println("__________________________");
+    jobSpiderService.fetchYesterdayDataFromLagou("Python");
+    System.out.println("__________________________");
+//    jobSpiderService.fetchYesterdayDataFromLagou("PHP");
+    System.out.println("__________________________");
+//    jobSpiderService.fetchYesterdayDataFromLagou("测试");
+  }
+
+
+
+
+  //从neitui爬去数据
+  @Test
+  public void testFetchAndSaveDataFromNeitui() {
+
+    jobSpiderService.fetchAndSaveDataFromNeitui("Java");
+    System.out.println("_____________________________________");
+    jobSpiderService.fetchAndSaveDataFromNeitui("Python");
+    System.out.println("_____________________________________");
+    jobSpiderService.fetchAndSaveDataFromNeitui("PHP");
+    System.out.println("_____________________________________");
+    jobSpiderService.fetchAndSaveDataFromNeitui("测试");
   }
 
 
   @Test
   public void testMultiFetch() throws InterruptedException {
 
-    jobSpiderService.multiThreadFetch("php");
+//    jobSpiderService.multiThreadFetch("php");
 
-    Thread.sleep(500000);//sleep 100s
+//    Thread.sleep(500000);//sleep 100s
 
   }
 }

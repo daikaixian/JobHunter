@@ -11,6 +11,7 @@ import org.jsoup.select.Elements;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 
 /**
  * Created by water on 4/14/16.
@@ -136,6 +137,16 @@ public class LagouSpiderServiceTest {
     } catch (IOException e) {
       e.printStackTrace();
     }
+
+  }
+
+  @Test
+  public void testStringToTimeStamp() {
+    String time = "2016-04-28 13:00:00";
+    System.out.println(Timestamp.valueOf(time).getTime());
+
+
+
 
   }
 
