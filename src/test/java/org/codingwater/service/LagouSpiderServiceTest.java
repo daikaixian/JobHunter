@@ -6,6 +6,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -38,10 +40,11 @@ public class LagouSpiderServiceTest {
   //内推,通过解析html页面获取数据
   @Test
   public void testNeituiWithJsoup() {
+//    http://www.neitui.me/?name=neitui&handle=lists&kcity=%E5%85%A8%E5%9B%BD&keyword=Java
     String neiTuiUrl = "http://www.neitui" +
-        ".me/?name=neitui&handle=lists&keyword=Java&kcity=上海&workage=2&page=1";
+        ".me/?name=neitui&handle=lists&keyword=Java&kcity=全国&page=1";
     try {
-      Document doc = Jsoup.connect(neiTuiUrl).ignoreContentType(true).get();
+      Document doc = Jsoup.connect(neiTuiUrl).ignoreContentType(true).timeout(10 * 1000).get();
      // System.out.println(doc);
       System.out.println("________________________________________________");
 //      System.out.println(doc.getElementById("joblist"));
@@ -50,16 +53,44 @@ public class LagouSpiderServiceTest {
 //      Elements jobList = doc.select(".commentjobs");
 //      System.out.println(jobList.size());
 
-      System.out.println(
-          doc.getElementsByAttributeValue("class", "content commentjobs brjobs topjobs"));
+      Element job = doc.getElementsByAttributeValue("class", "jobinfo brjob clearfix").get
+          (4);
+
+      String createTime = job.getElementsByAttributeValue("class", "createtime").text();
+      System.out.println("createTime : " + createTime);
+
+      Element elementLeft = job.getElementsByAttributeValue("class", "jobnote-l").get(0);
+//      System.out.println(elements1.text());
+      String positionId = elementLeft.getElementsByTag("a").get(0).attr("href").split("/")[2];
+      System.out.println("positionId: " + positionId);
+      String positionName =
+          elementLeft.getElementsByAttributeValue("class","padding-r10").get(0).text();
+      System.out.println("positionName:" + positionName);
+      String city = elementLeft.getElementsByAttributeValue("class","padding-r10").get(1).text();
+      System.out.println("city:" + city);
+      String monthSalary = elementLeft.getElementsByAttributeValue("class","padding-r10").get(2)
+          .text();
+      System.out.println("monthSalary:" + monthSalary);
+      String workYear = elementLeft.getElementsByAttributeValue("class","padding-r10").get(3)
+          .text();
+      System.out.println("workYear:" + workYear);
+      Element elementRight = job.getElementsByAttributeValue("class", "jobnote-r").get(0);
+      String companyName = elementRight.getElementsByAttributeValue("class","padding-r10").get(0)
+          .text();
+      System.out.println("companyName:" + companyName);
+
+
+
+
       //通过attribute的K-V查找模式.
+
 
       System.out.println("________________________________________________");
 //      System.out.println(doc.getElementById("J_Screen_Workage"));
 
-      System.out.println("________________________________________________");
+//      System.out.println("________________________________________________");
 //      System.out.println(doc.select("content commentjobs brjobs topjobs"));
-      System.out.println("________________________________________________");
+//      System.out.println("________________________________________________");
 //      System.out.println(doc.getElementsByClass("content commentjobs brjobs topjobs"));
 
 

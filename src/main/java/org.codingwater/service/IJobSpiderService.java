@@ -1,6 +1,7 @@
 package org.codingwater.service;
 
 import org.codingwater.model.LagouJobInfo;
+import org.codingwater.model.NeituiJobInfo;
 
 import java.util.List;
 
@@ -11,6 +12,9 @@ import java.util.List;
 public interface IJobSpiderService {
 
   List<LagouJobInfo> fetchJobInfosFromLagou(String city, String keyword,
+      int pageNumber, String monthlySalary, String workYears);
+
+  List<NeituiJobInfo> fetchJobInfosFromNeitui(String city, String keyword,
       int pageNumber, String monthlySalary, String workYears);
 
   void fetchYesterdayDataFromLagou(String keyword);

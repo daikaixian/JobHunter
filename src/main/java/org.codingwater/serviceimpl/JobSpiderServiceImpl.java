@@ -7,9 +7,12 @@ import com.google.common.collect.Lists;
 import org.codingwater.concurrency.FetchThread;
 import org.codingwater.dao.BaseJobInfoDAO;
 import org.codingwater.model.LagouJobInfo;
+import org.codingwater.model.NeituiJobInfo;
 import org.codingwater.service.IJobSpiderService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +73,80 @@ public class JobSpiderServiceImpl implements IJobSpiderService {
     
     return lagouJobInfoList;
   }
+
+  @Override
+  public List<NeituiJobInfo> fetchJobInfosFromNeitui(String city, String keyword, int pageNumber,
+      String monthlySalary, String workYears) {
+
+    if (city == null) {
+      city = "";
+    }
+    if (keyword == null) {
+      keyword = "";
+    }
+    if (pageNumber == 0) {
+      pageNumber = 1;
+    }
+    if (monthlySalary == null) {
+      monthlySalary = "";
+    }
+    //todo 可能需要做转换.
+    if (workYears == null) {
+      workYears = "";
+    }
+//    http://www.neitui.me/?name=neitui&handle=lists&kcity=%E5%85%A8%E5%9B%BD&keyword=Java&workage=2&page=1&payrange=5-10
+    //抓内推数据的url.
+
+    String neiTuiUrl = String.format("http://www.neitui.me/"
+        + "?name=neitui&handle=lists&keyword=%s&kcity=%s&page=1&workage=%d%payrange=%s",
+        keyword, city, pageNumber, workYears, monthlySalary);
+
+    Elements joblis = getLisFromDoc(neiTuiUrl);
+    List<NeituiJobInfo> neituiJobInfos = getJobListFromElements(joblis);
+
+    return neituiJobInfos;
+  }
+
+  private List<NeituiJobInfo> getJobListFromElements(Elements joblis) {
+
+    List<NeituiJobInfo> ret = Lists.newArrayList();
+    for (Element job : joblis) {
+      NeituiJobInfo neituiJob = new NeituiJobInfo();
+
+      String createTime = job.getElementsByAttributeValue("class", "createtime").text();
+      Element elementLeft = job.getElementsByAttributeValue("class", "jobnote-l").get(0);
+      String positionId = elementLeft.getElementsByTag("a").get(0).attr("href").split("/")[2];
+      String positionName =
+          elementLeft.getElementsByAttributeValue("class","padding-r10").get(0).text();
+      String city = elementLeft.getElementsByAttributeValue("class","padding-r10").get(1).text();
+      String monthSalary = elementLeft.getElementsByAttributeValue("class","padding-r10").get(2)
+          .text();
+      String workYear = elementLeft.getElementsByAttributeValue("class","padding-r10").get(3)
+          .text();
+      Element elementRight = job.getElementsByAttributeValue("class", "jobnote-r").get(0);
+      String companyName = elementRight.getElementsByAttributeValue("class","padding-r10").get(0)
+          .text();
+
+
+    }
+    return null;
+  }
+
+  private Elements getLisFromDoc(String neiTuiUrl) {
+
+    Document doc = null;
+    try {
+      doc = Jsoup.connect(neiTuiUrl).ignoreContentType(true).timeout(10 * 1000).get();
+    } catch (IOException e) {
+      logger.error("connect error while try to fetch from neitui.me", e);
+    }
+    if (doc == null) {
+      logger.info("请求异常, 抓取数据为空");
+      return new Elements();
+    }
+    return doc.getElementsByAttributeValue("class", "jobinfo brjob clearfix");
+  }
+
 
   public List<LagouJobInfo> getJobListFromJson(String resultData) {
     List<LagouJobInfo> ret = Lists.newArrayList();
