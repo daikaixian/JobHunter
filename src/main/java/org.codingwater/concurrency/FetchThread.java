@@ -69,16 +69,6 @@ public class FetchThread implements Runnable{
     System.out.println("Thread :" + threadName + " over");
   }
 
-
-
-
-
-
-
-
-
-
-
   public String getKeyword() {
     return keyword;
   }
