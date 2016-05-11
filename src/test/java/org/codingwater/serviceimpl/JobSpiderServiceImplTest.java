@@ -56,13 +56,13 @@ public class JobSpiderServiceImplTest extends BaseTest{
   @Test
   public void testFetchYesterdayDataFromLagou() {
 
-//    jobSpiderService.fetchYesterdayDataFromLagou("Java");
+    jobSpiderService.fetchYesterdayDataFromLagou("Java");
     System.out.println("__________________________");
     jobSpiderService.fetchYesterdayDataFromLagou("Python");
     System.out.println("__________________________");
-//    jobSpiderService.fetchYesterdayDataFromLagou("PHP");
+    jobSpiderService.fetchYesterdayDataFromLagou("PHP");
     System.out.println("__________________________");
-//    jobSpiderService.fetchYesterdayDataFromLagou("测试");
+    jobSpiderService.fetchYesterdayDataFromLagou("测试");
   }
 
 
@@ -85,7 +85,7 @@ public class JobSpiderServiceImplTest extends BaseTest{
   @Test
   public void testMultiFetch() throws InterruptedException {
 
-//    jobSpiderService.multiThreadFetch("php");
+    jobSpiderService.multiThreadFetch("php");
 
 //    Thread.sleep(500000);//sleep 100s
 
