@@ -191,12 +191,16 @@ public class JobSpiderServiceImpl implements IJobSpiderService {
 
     Map<String, Object> resultMap =  null;
     Map<String, Object> contentMap = null;
+    Map<String, Object> positionResultMap = null;
+
     List<Map<String, Object>> jobIndoList = null;
     try {
       //解析api数据
       resultMap = mapper.readValue(resultData, Map.class);
       contentMap = (Map<String, Object>) resultMap.get("content");
-      jobIndoList = (List<Map<String, Object>>) contentMap.get("result");
+      positionResultMap = (Map<String, Object>) contentMap.get("positionResult");
+
+      jobIndoList = (List<Map<String, Object>>) positionResultMap.get("result");
     } catch (Exception e) {
       logger.error("data transfor error.", e);
     }
