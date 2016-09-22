@@ -19,19 +19,19 @@ public class TestDynamicLB {
 
 	final static String[] caption = { "fast", "common", "slow" };
 
-	final static double[][] respSample = new double[][] {
+	 static double[][] respSample = new double[][] {
 			{ 0.060d, 0.001d }, // 60ms, fast
 			{ 0.200d, 0.01d }, // 200ms, common
 			{ 0.500d, 0.001d }// 500ms, slow
 	};
 
-	final static double[] opOKSample = new double[] {
+	 static double[] opOKSample = new double[] {
 			0.9999d, // ten-thousandth
 			0.999d, // thousandth
 			0.05d, // 5%
 	};
 
-	final static double[][] loadSample = new double[][] {
+	 static double[][] loadSample = new double[][] {
 			{ 20d, 0.01d }, // lightweight
 			{ 40d, 0.01d }, // normal
 			{ 60d, 0.01d }// overload

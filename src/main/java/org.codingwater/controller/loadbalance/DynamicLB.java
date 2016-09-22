@@ -175,7 +175,7 @@ public class DynamicLB {
 	 * 
 	 * @return
 	 */
-	protected int sample() {
+	public int sample() {
 		double s = Math.random();
 		for (int i = 0; i < choice.length; i++) {
 			// 从小到大排列,比较随机出来的概率位于哪个区间.

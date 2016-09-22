@@ -21,6 +21,7 @@
     var myChart3 = echarts.init(document.getElementById('lbimgae'));
     var option3 = {
 
+        color: ['#3398DB']
         title: {
             text: 'LoadBalance 测试'
         },

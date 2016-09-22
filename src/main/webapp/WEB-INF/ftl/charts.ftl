@@ -50,6 +50,7 @@
     myChart1.setOption(option1);
 
     var option2 = {
+
         title : {
             text: '参与计算平均工资的岗位对工作经验要求饼状图',
             subtext: '以${result1.city}市 ${result1.keyword}为检索条件',

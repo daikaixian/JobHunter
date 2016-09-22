@@ -1,24 +1,30 @@
 package org.codingwater.controller;
 
 import org.codingwater.concurrency.CaculateThread;
+import org.codingwater.controller.loadbalance.DynamicLB;
 import org.codingwater.controller.loadbalance.Nodes;
 import org.codingwater.controller.loadbalance.TestDynamicLB;
 import org.codingwater.model.SalaryQueryResult;
 import org.codingwater.service.IReportService;
 import org.omg.PortableInterceptor.INACTIVE;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Created by water on 4/26/16.
@@ -28,6 +34,8 @@ public class ChartsController {
 
   @Autowired
   IReportService reportService;
+
+  final static String[] caption = { "fast", "common", "slow" };
 
   @RequestMapping(value = "/charts/", method = RequestMethod.GET)
   public String chartsView(Model model, @RequestParam(value = "city", defaultValue = "上海")String
@@ -50,25 +58,51 @@ public class ChartsController {
   }
 
   @RequestMapping(value = "/loadbalance/", method = RequestMethod.GET)
-  public String loadbalance(Model model, @RequestParam("profiles") String profiles) {
+  public String loadbalance(Model model, @RequestParam("profiles") String profiles,
+          @RequestParam(value = "latestWindowSize", defaultValue = "100")int latestWS,
+          @RequestParam(value = "avgWindowSize", defaultValue = "5000")int avgWS
+          ) {
 
-    TestDynamicLB testDynamicLB = new TestDynamicLB();
     String[] str = profiles.split(",");
-
     int array[] = new int[str.length];
     for (int i = 0; i < str.length; i++) {
       array[i] = Integer.parseInt(str[i]);
     }
 
-    List<Nodes> ret = testDynamicLB.test(1, 1000, array);
+    //直接调用LB
+    DynamicLB dynamicLB = new DynamicLB(array.length, 1000, 5000);
+    List<Integer> samples = new ArrayList<Integer>();
 
-      for (Nodes node : ret) {
-        System.out.println(node.getCaption() + "=>" + node.getCount());
-      }
+    //根据生成的累加概率积分进行随机采样，统计10000次中各个节点被选择的次数
+    for (int j = 0; j < 10000; j++) {
+      int pos = dynamicLB.sample();
+      //做一万次采样
+      samples.add(pos);
+    }
+    //对样品进行统计.
+    //对采样数据整理
+    Map<Integer, Long> result = samples.stream()
+            .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 
-      model.addAttribute("nodes", ret);
+    String[] title = new String[array.length];
 
-      return "lb";
+    List<Nodes> nodesList = new ArrayList<>();
+    for (int j = 0; j < array.length; j++) {
+      Nodes nodes = new Nodes();
+      nodes.setCaption(caption[array[j]]);
+      System.out.println(result.get(j).intValue());
+      nodes.setCount(String.valueOf(result.get(j)));
+      nodesList.add(nodes);
+
+      title[j] = caption[array[j]];
+    }
+
+
+    for (Nodes node : nodesList) {
+      System.out.println(node.getCaption() + "=>" + node.getCount());
+    }
+    model.addAttribute("nodes", nodesList);
+    return "lb";
     }
 
 
