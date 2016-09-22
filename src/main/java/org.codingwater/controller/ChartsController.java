@@ -1,6 +1,8 @@
 package org.codingwater.controller;
 
 import org.codingwater.concurrency.CaculateThread;
+import org.codingwater.controller.loadbalance.Nodes;
+import org.codingwater.controller.loadbalance.TestDynamicLB;
 import org.codingwater.model.SalaryQueryResult;
 import org.codingwater.service.IReportService;
 import org.omg.PortableInterceptor.INACTIVE;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -44,6 +48,32 @@ public class ChartsController {
     model.addAttribute("result5", result5);
     return "charts";
   }
+
+  @RequestMapping(value = "/loadbalance/", method = RequestMethod.GET)
+  public String loadbalance(Model model, @RequestParam("profiles") String profiles) {
+
+    TestDynamicLB testDynamicLB = new TestDynamicLB();
+    String[] str = profiles.split(",");
+
+    int array[] = new int[str.length];
+    for (int i = 0; i < str.length; i++) {
+      array[i] = Integer.parseInt(str[i]);
+    }
+
+    List<Nodes> ret = testDynamicLB.test(1, 1000, array);
+
+      for (Nodes node : ret) {
+        System.out.println(node.getCaption() + "=>" + node.getCount());
+      }
+
+      model.addAttribute("nodes", ret);
+
+      return "lb";
+    }
+
+
+
+
 
 
   @RequestMapping(value = "/charts/multithread/", method = RequestMethod.GET)
