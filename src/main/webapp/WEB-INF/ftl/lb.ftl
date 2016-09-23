@@ -13,17 +13,18 @@
 
 <body>
 
-
+<div id="lbimgae2" style="width: 1000px;height:400px;"></div>
 <div id="lbimgae" style="width: 1000px;height:400px;"></div>
+
 
 <script type="text/javascript">
 
-    var myChart3 = echarts.init(document.getElementById('lbimgae'));
-    var option3 = {
+    var myChart = echarts.init(document.getElementById('lbimgae'));
+    var option1 = {
 
-        color: ['#3398DB']
+        color: ['#3398DB'],
         title: {
-            text: 'LoadBalance 测试'
+            text: 'LoadBalance 验证'
         },
         tooltip: {},
         legend: {
@@ -50,7 +51,54 @@
         }]
     };
 
-    myChart3.setOption(option3);
+    myChart.setOption(option1);
+
+    var myChart2 = echarts.init(document.getElementById('lbimgae2'));
+
+    var option2 = {
+        title : {
+            text: 'loadbalance',
+            subtext: '预测',
+            x:'center'
+        },
+        tooltip : {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            orient: 'vertical',
+            left: 'left',
+            data: [
+            <#list nodes as node>
+                "${node.caption}",
+            </#list>
+            ]
+        },
+        series : [
+            {
+                name: '该node被选中的几率',
+                type: 'pie',
+                radius : '55%',
+                center: ['50%', '60%'],
+                data:[
+                <#list nodes as node>
+                    {value:${node.possibility}, name:'${node.caption}'},
+                </#list>
+
+                ],
+                itemStyle: {
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }
+        ]
+    };
+
+    myChart2.setOption(option2);
+
 
 
 </script>

@@ -1,6 +1,7 @@
 package org.codingwater.controller.loadbalance;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.util.DoubleArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,7 +103,7 @@ public class DynamicLB {
 		return nodeCount;
 	}
 
-	protected void updateOneResp(int i, double resp1, boolean ok1) {
+	public void updateOneResp(int i, double resp1, boolean ok1) {
 		synchronized (resp) {
 
 			resp[i].addValue(resp1);
@@ -114,7 +115,7 @@ public class DynamicLB {
 		}
 	}
 
-	protected void updateActive(int[] active) {
+	public void updateActive(int[] active) {
 		synchronized (load) { // ordering for write
 			for (int i = 0; i < load.length; i++) {
 				load[i].addValue(active[i]);
@@ -124,7 +125,7 @@ public class DynamicLB {
 		}
 	}
 
-	protected synchronized double[] flashChoice() {
+	public synchronized double[] flashChoice() {
 		double total = 0d;
 		for (int i = 0; i < choice.length; i++) {
 			double resp_snap = resp[i].getMean();
@@ -135,12 +136,12 @@ public class DynamicLB {
 			double loadAvg_snap = loadAvg[i].getMean();
 			double failAvg_snap = failAvg[i].getMean();
 
-			double resp_rate = Math.min(resp_snap / RESP_REF, 1d);
-			double load_rate = Math.min(load_snap / LOAD_REF, 1d);
-			double fail_rate = fail_snap;
+			double resp_rate =   Math.min(resp_snap / RESP_REF, 1d) ;
+			double load_rate =  Math.min(load_snap / LOAD_REF, 1d);
+			double fail_rate =  fail_snap ;
 
-			double respAvg_rate = Math.min(respAvg_snap / RESP_REF, 1d);
-			double loadAvg_rate = Math.min(loadAvg_snap / LOAD_REF, 1d);
+			double respAvg_rate =  Math.min(respAvg_snap / RESP_REF, 1d) ;
+			double loadAvg_rate =  Math.min(loadAvg_snap / LOAD_REF, 1d) ;
 			double failAvg_rate = failAvg_snap;
 
 			/**
@@ -154,20 +155,34 @@ public class DynamicLB {
 					+ wRespAvg * Math.log(respAvg_rate) + wLoadAvg * Math.log(loadAvg_rate)
 					+ wFail * Math.log(fail_rate) + wFailAvg * Math.log(failAvg_rate));
 			total += choice[i];
+
+			if(Double.isInfinite(total)) {
+
+				System.out.println(i + " => resp_rate : " + resp_rate + ",respAvg_rate : " + respAvg_rate + ", load_rate: "+
+						load_rate
+						+ " ,loadAvg_rate :" + loadAvg_rate + ", fail_rate : " + fail_rate + ", failAvg_rate:" + failAvg_rate);
+			}
+
+
 		}
 
+		double [] ret = new double[choice.length];
 		for (int i = 0; i < choice.length; i++) {
 			/**
 			 * P_N1 = E_N1 / (E_N1 + E_N2 + ... + E_Nn)
 			 * choice[i] = P
 			 */
+			ret[i] = choice[i]/total;
 			choice[i] /= total;
 			if (i > 0) {
 				choice[i] += choice[i - 1];
 			}
 		}
 		log.info("flash choice = " + Arrays.toString(choice));
-		return choice;
+		if(Double.isNaN(ret[0])) {
+			System.out.println(choice[0] + ", total= " + total);
+		}
+		return ret;
 	}
 
 	/**

@@ -10,6 +10,10 @@ public class Nodes {
 
 	public String count;
 
+	public double possibility;
+
+
+
 	public String getCaption() {
 		return caption;
 	}
@@ -24,5 +28,13 @@ public class Nodes {
 
 	public void setCount(String count) {
 		this.count = count;
+	}
+
+	public double getPossibility() {
+		return possibility;
+	}
+
+	public void setPossibility(double possibility) {
+		this.possibility = possibility;
 	}
 }
