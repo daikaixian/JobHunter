@@ -68,17 +68,17 @@
         </property>
     </bean>
 
-    <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
-        <constructor-arg index="0" ref="sqlSessionFactory" />
-    </bean>
+    <!--<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">-->
+        <!--<constructor-arg index="0" ref="sqlSessionFactory" />-->
+    <!--</bean>-->
 
     <!-- mybatis文件配置，扫描所有mapper文件 -->
-    <bean id="sqlSessionFactory"
-          class="org.mybatis.spring.SqlSessionFactoryBean"
-          p:dataSource-ref="dataSource"
-          p:configLocation="/WEB-INF/mybatis-config.xml"
-          p:mapperLocations="/WEB-INF/mapper/*.xml"/><!-- configLocation为mybatis属性
-          mapperLocations为所有mapper-->
+    <!--<bean id="sqlSessionFactory"-->
+          <!--class="org.mybatis.spring.SqlSessionFactoryBean"-->
+          <!--p:dataSource-ref="dataSource"-->
+          <!--p:configLocation="/WEB-INF/mybatis-config.xml"-->
+          <!--p:mapperLocations="/WEB-INF/mapper/*.xml"/>&lt;!&ndash; configLocation为mybatis属性-->
+          <!--mapperLocations为所有mapper&ndash;&gt;-->
 
 
     <!--&lt;!&ndash; spring与mybatis整合配置，扫描所有dao &ndash;&gt;-->

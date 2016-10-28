@@ -46,6 +46,15 @@ public class ChartsController {
   }
 
 
+
+  @RequestMapping(value = "loadbalance", method = RequestMethod.GET)
+  public String loadbalance() {
+
+
+    return "charts";
+  }
+
+
   @RequestMapping(value = "/charts/multithread/", method = RequestMethod.GET)
   public String chartsViewWithCallable(Model model, @RequestParam(value = "city", defaultValue =
       "上海")String
